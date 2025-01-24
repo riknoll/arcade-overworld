@@ -48,8 +48,6 @@ namespace overworld {
             const newMap = this.getMap(column, row);
             if (!newMap) return false;
 
-            const currentMap = this.getMap(this.column, this.row);
-
             const doTransition = () => {
                 this.column = column;
                 this.row = row;
@@ -97,17 +95,6 @@ namespace overworld {
                 doTransition();
                 return true;
             }
-
-            const playerColumn = Math.constrain(
-                this.playerSprite.left >> newMap.scale,
-                0,
-                newMap.width - 1
-            );
-            const playerRow = Math.constrain(
-                this.playerSprite.top >> newMap.scale,
-                0,
-                newMap.height - 1
-            );
 
             const tileWidth = 1 << newMap.scale;
 
@@ -172,7 +159,6 @@ namespace overworld {
                 return false;
             }
 
-            doTransition();
 
             // when moving the player to the opposite edge of the next tilemap,
             // try to find the closest tile that isn't obstructed by walls
@@ -192,6 +178,7 @@ namespace overworld {
                             )) {
                                 this.nextPlayerLeft = x0;
                                 this.nextPlayerTop = ((row + 1) << newMap.scale) - playerHeight;
+                                doTransition();
                                 return true;
                             }
                             x0 -= tileWidth;
@@ -207,6 +194,7 @@ namespace overworld {
                             )) {
                                 this.nextPlayerLeft = x1;
                                 this.nextPlayerTop = ((row + 1) << newMap.scale) - playerHeight;
+                                doTransition();
                                 return true;
                             }
                             x1 += tileWidth;
@@ -232,6 +220,7 @@ namespace overworld {
                             )) {
                                 this.nextPlayerLeft = x0;
                                 this.nextPlayerTop = row << newMap.scale;
+                                doTransition();
                                 return true;
                             }
                             x0 -= tileWidth;
@@ -247,6 +236,7 @@ namespace overworld {
                             )) {
                                 this.nextPlayerLeft = x1;
                                 this.nextPlayerTop = row << newMap.scale;
+                                doTransition();
                                 return true;
                             }
                             x1 += tileWidth;
@@ -272,6 +262,7 @@ namespace overworld {
                             )) {
                                 this.nextPlayerTop = y0;
                                 this.nextPlayerLeft = ((col + 1) << newMap.scale) - playerWidth;
+                                doTransition();
                                 return true;
                             }
                             y0 -= tileWidth;
@@ -287,6 +278,7 @@ namespace overworld {
                             )) {
                                 this.nextPlayerTop = y1;
                                 this.nextPlayerLeft = ((col + 1) << newMap.scale) - playerWidth;
+                                doTransition();
                                 return true;
                             }
                             y1 += tileWidth;
@@ -312,6 +304,7 @@ namespace overworld {
                             )) {
                                 this.nextPlayerLeft = y0;
                                 this.nextPlayerTop = col << newMap.scale;
+                                doTransition();
                                 return true;
                             }
                             y0 -= tileWidth;
@@ -327,6 +320,7 @@ namespace overworld {
                             )) {
                                 this.nextPlayerTop = y1;
                                 this.nextPlayerLeft = col << newMap.scale;
+                                doTransition();
                                 return true;
                             }
                             y1 += tileWidth;
@@ -337,6 +331,7 @@ namespace overworld {
                 this.nextPlayerLeft = 0;
             }
 
+            doTransition();
             return true;
         }
 
