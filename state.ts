@@ -78,11 +78,11 @@ namespace overworld {
                 }
 
                 if (!didTransition) {
+                    tiles.setTilemap(newMap);
                     if (this.playerSprite) {
                         this.playerSprite.left = this.nextPlayerLeft;
                         this.playerSprite.top = this.nextPlayerTop;
                     }
-                    tiles.setTilemap(newMap);
                 }
             }
 
@@ -517,7 +517,7 @@ namespace overworld {
             callback = game.eventContext().registerFrameHandler(-1, loadNewMap);
         }
 
-        protected startColorTransition(newMap: tiles.TileMapData, r: number, b: number, g: number) {
+        protected startColorTransition(newMap: tiles.TileMapData, r: number, g: number, b: number) {
             this.isTransitioning = true;
             const previousScene = game.currentScene();
             game.pushScene();
