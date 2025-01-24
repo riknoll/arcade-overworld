@@ -1,0 +1,24 @@
+{
+    "name": "arcade-overworld",
+    "version": "0.0.0",
+    "description": "",
+    "dependencies": {
+        "device": "*",
+        "arcade-extension-utils": "github:riknoll/arcade-extension-utils#v0.0.1"
+    },
+    "files": [
+        "main.ts",
+        "state.ts",
+        "api.ts",
+        "README.md"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "targetVersions": {
+    },
+    "supportedTargets": [
+        "arcade"
+    ],
+    "preferredEditor": "tsprj"
+}
