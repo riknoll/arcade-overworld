@@ -110,8 +110,8 @@ namespace overworld {
                     playerWidth,
                     playerHeight
                 )) {
-                    doTransition();
                     this.nextPlayerTop = (newMap.height << newMap.scale) - playerHeight - 1;
+                    doTransition();
                     return true;
                 }
             }
@@ -123,8 +123,8 @@ namespace overworld {
                     playerWidth,
                     playerHeight
                 )) {
-                    doTransition();
                     this.nextPlayerTop = 0;
+                    doTransition();
                     return true;
                 }
             }
@@ -136,8 +136,8 @@ namespace overworld {
                     playerWidth,
                     playerHeight
                 )) {
-                    doTransition();
                     this.nextPlayerLeft = (newMap.width << newMap.scale) - playerWidth - 1;
+                    doTransition();
                     return true;
                 }
             }
@@ -149,8 +149,8 @@ namespace overworld {
                     playerWidth,
                     playerHeight
                 )) {
-                    doTransition();
                     this.nextPlayerLeft = 0;
+                    doTransition();
                     return true;
                 }
             }
@@ -481,7 +481,14 @@ namespace overworld {
 
                     progress = timingFunction(progress, this.transitionFunc);
 
+                    const currentMap = game.currentScene().tileMap;
+
+                    // if any render functions in the user project try to get the tilemap,
+                    // they do so by getting it off of the current scene. override the scene's
+                    // tilemap so that they get the map they're expecting
+                    game.currentScene().tileMap = previousScene.tileMap;
                     previousScene.render();
+                    game.currentScene().tileMap = currentMap;
 
                     if (direction === CollisionDirection.Right) {
                         const offset = Math.round(progress * screen.width);
