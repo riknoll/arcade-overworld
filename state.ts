@@ -8,6 +8,9 @@ namespace overworld {
         protected row: number;
         protected enabled: boolean;
         protected wallsBlockTransitions: boolean;
+        protected continuousMode: boolean;
+        protected continuousData: overworld.TileMapData;
+        protected mapLoadedHandlers: ((col: number, row: number, map: tiles.TileMapData) => void)[]
 
         transitionDuration: number;
         transitionFunc: TimingFunction;
@@ -27,6 +30,7 @@ namespace overworld {
             this.transitionDuration = 300;
             this.transitionFunc = TimingFunction.Linear;
             this.transitionType = AnimationType.None;
+            this.mapLoadedHandlers = [];
 
             game.eventContext().registerFrameHandler(scene.UPDATE_PRIORITY - 1, () => {
                 this.update();
@@ -34,10 +38,13 @@ namespace overworld {
         }
 
         setMap(map: tiles.TileMapData[][]) {
-            if (this.enabled === undefined) {
+            this.map = map;
+            if (this.continuousMode) {
+                this.initContinuousTilemap();
+            }
+            else if (this.enabled === undefined) {
                 this.enabled = !!map;
             }
-            this.map = map;
         }
 
         setPlayerSprite(sprite: Sprite) {
@@ -45,6 +52,10 @@ namespace overworld {
         }
 
         loadMap(column: number, row: number, transitionDirection?: CollisionDirection): boolean {
+            if (this.continuousMode) {
+                this.setContinuousModeEnabled(false);
+            }
+
             const newMap = this.getMap(column, row);
             if (!newMap) return false;
 
@@ -83,6 +94,7 @@ namespace overworld {
                         this.playerSprite.left = this.nextPlayerLeft;
                         this.playerSprite.top = this.nextPlayerTop;
                     }
+                    this.fireMapLoadEvent();
                 }
             }
 
@@ -336,7 +348,35 @@ namespace overworld {
         }
 
         update() {
-            if (!this.enabled || !this.playerSprite || this.isTransitioning) return;
+            if (!this.playerSprite) return;
+
+            if (this.continuousMode) {
+                this.updateContinuousMode();
+            }
+            else {
+                this.updateMapTransitions();
+            }
+        }
+
+        protected updateContinuousMode() {
+            const column = this.playerSprite.x >> this.continuousData.scale;
+            const row = this.playerSprite.y >> this.continuousData.scale;
+
+            const overworldColumn = Math.idiv(column, this.continuousData.mapWidth);
+            const overworldRow = Math.idiv(row, this.continuousData.mapHeight);
+
+            if (
+                (this.column !== overworldColumn || this.row !== overworldRow) &&
+                this.getMap(overworldColumn, overworldRow)
+            ) {
+                this.column = overworldColumn;
+                this.row = overworldRow;
+                this.fireMapLoadEvent();
+            }
+        }
+
+        protected updateMapTransitions() {
+            if (!this.enabled || this.isTransitioning) return;
 
             const map = this.getMap(this.column, this.row);
 
@@ -450,6 +490,71 @@ namespace overworld {
             this.customColor = parseColor(color);
         }
 
+        setContinuousModeEnabled(enabled: boolean) {
+            if (!!this.continuousMode === !!enabled) return;
+
+            this.continuousMode = enabled;
+            this.continuousData = undefined;
+            if (enabled) {
+                this.initContinuousTilemap();
+            }
+            else {
+                const oldTilemap = game.currentScene().tileMap;
+                if (oldTilemap) {
+                    oldTilemap.renderable.destroy();
+                }
+                game.currentScene().tileMap = new tiles.TileMap();
+                this.column = 0;
+                this.row = 0;
+            }
+        }
+
+        addMapLoadedListener(handler: (column: number, row: number, map: tiles.TileMapData) => void) {
+            this.mapLoadedHandlers.push(handler);
+        }
+
+        removeMapLoadedListener(handler: (column: number, row: number, map: tiles.TileMapData) => void) {
+            this.mapLoadedHandlers = this.mapLoadedHandlers.filter(h => h !== handler);
+        }
+
+        protected initContinuousTilemap() {
+            if (!this.map) return;
+
+            const oldTilemap = game.currentScene().tileMap;
+            if (oldTilemap) {
+                oldTilemap.renderable.destroy();
+            }
+
+            const newTilemap = new overworld.TileMap();
+            game.currentScene().tileMap = newTilemap;
+            this.continuousData = new overworld.TileMapData(this.map);
+            tiles.setTilemap(this.continuousData);
+
+            let column: number;
+            let row: number;
+
+            if (this.playerSprite) {
+                column = this.playerSprite.x >> this.continuousData.scale;
+                row = this.playerSprite.y >> this.continuousData.scale;
+            }
+            else {
+                const camera = game.currentScene().camera;
+
+                column = camera.x >> this.continuousData.scale;
+                row = camera.y >> this.continuousData.scale;
+            }
+
+            this.column = Math.idiv(column, this.continuousData.mapWidth);
+            this.row = Math.idiv(row, this.continuousData.mapHeight);
+
+            if (!this.getMap(this.column, this.row)) {
+                this.column = 0;
+                this.row = 0;
+            }
+
+            this.fireMapLoadEvent();
+        }
+
         protected startScrollTransition(direction: CollisionDirection, newMap: tiles.TileMapData) {
             this.isTransitioning = true;
             const playerIsInvisible = this.playerSprite.flags & SpriteFlag.Invisible;
@@ -470,6 +575,8 @@ namespace overworld {
                 this.playerSprite.top = this.nextPlayerTop;
                 recorder.destroy();
                 tiles.setTilemap(newMap);
+                this.fireMapLoadEvent();
+
                 game.eventContext().unregisterFrameHandler(callback);
 
                 const previousScene = game.currentScene();
@@ -544,6 +651,8 @@ namespace overworld {
                         this.playerSprite.left = this.nextPlayerLeft;
                         this.playerSprite.top = this.nextPlayerTop;
                     }
+                    this.fireMapLoadEvent();
+
                     game.pushScene();
 
                     scene.createRenderable(1, () => {
@@ -578,6 +687,12 @@ namespace overworld {
                     previousScene.render();
                 }
             })
+        }
+
+        protected fireMapLoadEvent() {
+            for (const handler of this.mapLoadedHandlers) {
+                handler(this.column, this.row, this.getMap(this.column, this.row));
+            }
         }
     }
 

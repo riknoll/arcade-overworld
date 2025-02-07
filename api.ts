@@ -153,6 +153,15 @@ namespace overworld {
         return !!getMapInDirection(direction);
     }
 
+    //% blockId=overworld_onMapLoaded
+    //% block="on map loaded at $overworldColumn $overworldRow $map"
+    //% draggableParameters="reporter"
+    //% group=Load
+    //% weight=30
+    export function onMapLoaded(handler: (overworldColumn: number, overworldRow: number, map: tiles.TileMapData) => void) {
+        _state().addMapLoadedListener(handler);
+    }
+
     //% blockId=overworld_setAnimationType
     //% block="overworld set animation type $animationType"
     //% group=Animation
@@ -213,20 +222,22 @@ namespace overworld {
         _state().setWallsBlockTransitions(blockEnabled);
     }
 
+    //% blockId=overworld_setContinuousModeEnabled
+    //% block="set continuous mode enabled $enabled"
+    //% group=Options
+    //% weight=70
+    export function setContinuousModeEnabled(enabled: boolean) {
+        _state().setContinuousModeEnabled(enabled);
+    }
+
     //% blockId=overworld_createMap16
-    //% block="$row0 $row1 $row2|| $row3 $row4 $row5 $row6 $row7 $row8 $row9 $row10 $row11"
+    //% block="$row0 $row1 $row2|| $row3 $row4 $row5"
     //% row0.shadow=overworld_mapRow16
     //% row1.shadow=overworld_mapRow16
     //% row2.shadow=overworld_mapRow16
     //% row3.shadow=overworld_mapRow16
     //% row4.shadow=overworld_mapRow16
     //% row5.shadow=overworld_mapRow16
-    //% row6.shadow=overworld_mapRow16
-    //% row7.shadow=overworld_mapRow16
-    //% row8.shadow=overworld_mapRow16
-    //% row9.shadow=overworld_mapRow16
-    //% row10.shadow=overworld_mapRow16
-    //% row11.shadow=overworld_mapRow16
     //% inlineInputMode=external
     //% group=Shadows
     //% blockGap=8
@@ -237,12 +248,6 @@ namespace overworld {
         row3?: tiles.TileMapData[],
         row4?: tiles.TileMapData[],
         row5?: tiles.TileMapData[],
-        row6?: tiles.TileMapData[],
-        row7?: tiles.TileMapData[],
-        row8?: tiles.TileMapData[],
-        row9?: tiles.TileMapData[],
-        row10?: tiles.TileMapData[],
-        row11?: tiles.TileMapData[],
     ): tiles.TileMapData[][] {
         return createMap(
             row0,
@@ -250,30 +255,18 @@ namespace overworld {
             row2,
             row3,
             row4,
-            row5,
-            row6,
-            row7,
-            row8,
-            row9,
-            row10,
-            row11
+            row5
         );
     }
 
     //% blockId=overworld_createMap8
-    //% block="$row0 $row1 $row2|| $row3 $row4 $row5 $row6 $row7 $row8 $row9 $row10 $row11"
+    //% block="$row0 $row1 $row2|| $row3 $row4 $row5"
     //% row0.shadow=overworld_mapRow8
     //% row1.shadow=overworld_mapRow8
     //% row2.shadow=overworld_mapRow8
     //% row3.shadow=overworld_mapRow8
     //% row4.shadow=overworld_mapRow8
     //% row5.shadow=overworld_mapRow8
-    //% row6.shadow=overworld_mapRow8
-    //% row7.shadow=overworld_mapRow8
-    //% row8.shadow=overworld_mapRow8
-    //% row9.shadow=overworld_mapRow8
-    //% row10.shadow=overworld_mapRow8
-    //% row11.shadow=overworld_mapRow8
     //% inlineInputMode=external
     //% group=Shadows
     //% blockGap=8
@@ -284,12 +277,6 @@ namespace overworld {
         row3?: tiles.TileMapData[],
         row4?: tiles.TileMapData[],
         row5?: tiles.TileMapData[],
-        row6?: tiles.TileMapData[],
-        row7?: tiles.TileMapData[],
-        row8?: tiles.TileMapData[],
-        row9?: tiles.TileMapData[],
-        row10?: tiles.TileMapData[],
-        row11?: tiles.TileMapData[],
     ): tiles.TileMapData[][] {
         return createMap(
             row0,
@@ -297,30 +284,18 @@ namespace overworld {
             row2,
             row3,
             row4,
-            row5,
-            row6,
-            row7,
-            row8,
-            row9,
-            row10,
-            row11
+            row5
         );
     }
 
     //% blockId=overworld_mapRow16
-    //% block="$map0 $map1 $map2|| $map3 $map4 $map5 $map6 $map7 $map8 $map9 $map10 $map11"
+    //% block="$map0 $map1 $map2|| $map3 $map4 $map5"
     //% map0.shadow=overworld_tilemap16
     //% map1.shadow=overworld_tilemap16
     //% map2.shadow=overworld_tilemap16
     //% map3.shadow=overworld_tilemap16
     //% map4.shadow=overworld_tilemap16
     //% map5.shadow=overworld_tilemap16
-    //% map6.shadow=overworld_tilemap16
-    //% map7.shadow=overworld_tilemap16
-    //% map8.shadow=overworld_tilemap16
-    //% map9.shadow=overworld_tilemap16
-    //% map10.shadow=overworld_tilemap16
-    //% map11.shadow=overworld_tilemap16
     //% inlineInputMode=inline
     //% group=Shadows
     //% blockGap=8
@@ -331,12 +306,6 @@ namespace overworld {
         map3?: tiles.TileMapData,
         map4?: tiles.TileMapData,
         map5?: tiles.TileMapData,
-        map6?: tiles.TileMapData,
-        map7?: tiles.TileMapData,
-        map8?: tiles.TileMapData,
-        map9?: tiles.TileMapData,
-        map10?: tiles.TileMapData,
-        map11?: tiles.TileMapData,
     ): tiles.TileMapData[] {
         return createMapRow(
             map0,
@@ -345,29 +314,17 @@ namespace overworld {
             map3,
             map4,
             map5,
-            map6,
-            map7,
-            map8,
-            map9,
-            map10,
-            map11
         );
     }
 
     //% blockId=overworld_mapRow8
-    //% block="$map0 $map1 $map2|| $map3 $map4 $map5 $map6 $map7 $map8 $map9 $map10 $map11"
+    //% block="$map0 $map1 $map2|| $map3 $map4 $map5"
     //% map0.shadow=overworld_tilemap8
     //% map1.shadow=overworld_tilemap8
     //% map2.shadow=overworld_tilemap8
     //% map3.shadow=overworld_tilemap8
     //% map4.shadow=overworld_tilemap8
     //% map5.shadow=overworld_tilemap8
-    //% map6.shadow=overworld_tilemap8
-    //% map7.shadow=overworld_tilemap8
-    //% map8.shadow=overworld_tilemap8
-    //% map9.shadow=overworld_tilemap8
-    //% map10.shadow=overworld_tilemap8
-    //% map11.shadow=overworld_tilemap8
     //% inlineInputMode=inline
     //% group=Shadows
     //% blockGap=8
@@ -378,12 +335,6 @@ namespace overworld {
         map3?: tiles.TileMapData,
         map4?: tiles.TileMapData,
         map5?: tiles.TileMapData,
-        map6?: tiles.TileMapData,
-        map7?: tiles.TileMapData,
-        map8?: tiles.TileMapData,
-        map9?: tiles.TileMapData,
-        map10?: tiles.TileMapData,
-        map11?: tiles.TileMapData,
     ): tiles.TileMapData[] {
         return createMapRow(
             map0,
@@ -392,12 +343,6 @@ namespace overworld {
             map3,
             map4,
             map5,
-            map6,
-            map7,
-            map8,
-            map9,
-            map10,
-            map11
         );
     }
 

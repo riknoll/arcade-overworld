@@ -9,6 +9,7 @@
     "files": [
         "main.ts",
         "state.ts",
+        "continuousTilemap.ts",
         "api.ts",
         "README.md"
     ],
