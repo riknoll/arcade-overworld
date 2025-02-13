@@ -43,6 +43,7 @@ namespace overworld {
     //% maps.shadow=overworld_createMap16
     //% group=Create
     //% weight=100
+    //% help=github:arcade-overworld/docs/set-overworld
     export function setOverworld16(maps: tiles.TileMapData[][]): void {
         _state().setMap(maps);
     }
@@ -52,6 +53,7 @@ namespace overworld {
     //% maps.shadow=overworld_createMap8
     //% group=Create
     //% weight=90
+    //% help=github:arcade-overworld/docs/set-overworld
     export function setOverworld8(maps: tiles.TileMapData[][]): void {
         _state().setMap(maps);
     }
@@ -62,6 +64,7 @@ namespace overworld {
     //% sprite.defl=mySprite
     //% group=Create
     //% weight=80
+    //% help=github:arcade-overworld/docs/set-player-sprite
     export function setPlayerSprite(sprite: Sprite): void {
         _state().setPlayerSprite(sprite);
     }
@@ -70,6 +73,7 @@ namespace overworld {
     //% block="overworld location $property"
     //% group=Load
     //% weight=100
+    //% help=github:arcade-overworld/docs/current-location
     export function currentLocation(property: LocationProperty): number {
         return _state().currentLocation(property);
     }
@@ -79,6 +83,7 @@ namespace overworld {
     //% group=Load
     //% weight=90
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/load-map
     export function loadMap(column: number, row: number): void {
         _state().loadMap(column, row);
     }
@@ -87,6 +92,7 @@ namespace overworld {
     //% block="load overworld map in direction $direction"
     //% group=Load
     //% weight=80
+    //% help=github:arcade-overworld/docs/load-map-in-direction
     export function loadMapInDirection(direction: CollisionDirection): void {
         const column = currentLocation(LocationProperty.Column);
         const row = currentLocation(LocationProperty.Row);
@@ -110,6 +116,7 @@ namespace overworld {
     //% group=Load
     //% weight=70
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/get-map-at
     export function getMapAt(column: number, row: number): tiles.TileMapData {
         return _state().getMap(column, row);
     }
@@ -118,6 +125,7 @@ namespace overworld {
     //% block="get overworld map in direction $direction"
     //% group=Load
     //% weight=60
+    //% help=github:arcade-overworld/docs/get-map-in-direction
     export function getMapInDirection(direction: CollisionDirection): tiles.TileMapData {
         const column = currentLocation(LocationProperty.Column);
         const row = currentLocation(LocationProperty.Row);
@@ -141,6 +149,7 @@ namespace overworld {
     //% group=Load
     //% weight=50
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/map-exists-at
     export function mapExistsAt(column: number, row: number): boolean {
         return !!getMapAt(column, row);
     }
@@ -149,6 +158,7 @@ namespace overworld {
     //% block="overworld map exists in direction $direction"
     //% group=Load
     //% weight=40
+    //% help=github:arcade-overworld/docs/map-exists-in-direction
     export function mapExistsInDirection(direction: CollisionDirection): boolean {
         return !!getMapInDirection(direction);
     }
@@ -158,6 +168,7 @@ namespace overworld {
     //% draggableParameters="reporter"
     //% group=Load
     //% weight=30
+    //% help=github:arcade-overworld/docs/on-map-loaded
     export function onMapLoaded(handler: (overworldColumn: number, overworldRow: number, map: tiles.TileMapData) => void) {
         _state().addMapLoadedListener(handler);
     }
@@ -166,6 +177,7 @@ namespace overworld {
     //% block="overworld set animation type $animationType"
     //% group=Animation
     //% weight=100
+    //% help=github:arcade-overworld/docs/set-animation-type
     export function setAnimationType(animationType: AnimationType) {
         _state().transitionType = animationType;
     }
@@ -175,6 +187,7 @@ namespace overworld {
     //% duration.shadow=timePicker
     //% group=Animation
     //% weight=90
+    //% help=github:arcade-overworld/docs/set-animation-duration
     export function setAnimationDuration(duration: number) {
         _state().transitionDuration = duration;
     }
@@ -183,6 +196,7 @@ namespace overworld {
     //% block="overworld set animation timing function $func"
     //% group=Animation
     //% weight=80
+    //% help=github:arcade-overworld/docs/set-animation-timing-function
     export function setAnimationTimingFunction(func: TimingFunction) {
         _state().transitionFunc = func;
     }
@@ -192,6 +206,7 @@ namespace overworld {
     //% group=Animation
     //% color.defl="#000000"
     //% weight=70
+    //% help=github:arcade-overworld/docs/set-animation-fade-color
     export function setAnimationFadeColor(color: string) {
         _state().setFadeColor(color);
     }
@@ -201,6 +216,7 @@ namespace overworld {
     //% group=Options
     //% weight=100
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/set-map-transitions-enabled
     export function setMapTransitionsEnabled(enabled: boolean) {
         _state().setMapTransitionsEnabled(enabled);
     }
@@ -210,6 +226,7 @@ namespace overworld {
     //% group=Options
     //% weight=90
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/set-map-transition-radius
     export function setMapTransitionRadius(radius: number) {
         _state().setMapTransitionRadius(radius);
     }
@@ -218,6 +235,7 @@ namespace overworld {
     //% block="set walls block map transitions $blockEnabled"
     //% group=Options
     //% weight=80
+    //% help=github:arcade-overworld/docs/set-walls-block-transitions
     export function setWallsBlockTransitions(blockEnabled: boolean) {
         _state().setWallsBlockTransitions(blockEnabled);
     }
@@ -226,6 +244,7 @@ namespace overworld {
     //% block="set continuous mode enabled $enabled"
     //% group=Options
     //% weight=70
+    //% help=github:arcade-overworld/docs/set-continuous-mode-enabled
     export function setContinuousModeEnabled(enabled: boolean) {
         _state().setContinuousModeEnabled(enabled);
     }
@@ -241,6 +260,7 @@ namespace overworld {
     //% inlineInputMode=external
     //% group=Shadows
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/create-map
     export function createMap16(
         row0: tiles.TileMapData[],
         row1: tiles.TileMapData[],
@@ -270,6 +290,7 @@ namespace overworld {
     //% inlineInputMode=external
     //% group=Shadows
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/create-map
     export function createMap8(
         row0: tiles.TileMapData[],
         row1: tiles.TileMapData[],
@@ -299,6 +320,7 @@ namespace overworld {
     //% inlineInputMode=inline
     //% group=Shadows
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/create-map
     export function mapRow16(
         map0: tiles.TileMapData,
         map1: tiles.TileMapData,
@@ -328,6 +350,7 @@ namespace overworld {
     //% inlineInputMode=inline
     //% group=Shadows
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/create-map
     export function mapRow8(
         map0: tiles.TileMapData,
         map1: tiles.TileMapData,
@@ -423,6 +446,7 @@ namespace overworld {
     //% duplicateShadowOnDrag
     //% group=Shadows
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/create-map
     export function tilemap8(tilemap: tiles.TileMapData): tiles.TileMapData {
         return tilemap;
     }
@@ -440,6 +464,7 @@ namespace overworld {
     //% duplicateShadowOnDrag
     //% group=Shadows
     //% blockGap=8
+    //% help=github:arcade-overworld/docs/create-map
     export function tilemap16(tilemap: tiles.TileMapData): tiles.TileMapData {
         return tilemap;
     }

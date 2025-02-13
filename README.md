@@ -9,6 +9,14 @@ A MakeCode Arcade extension for connecting multiple tilemaps in a grid. For exam
 ![A screenshot of the blocks code from the above share link.](./media/basic-example.png)
 
 
+## The overworld grid
+
+The grid in the overworld is created using the set overworld block. Once an overworld is set, you can reference maps in the grid using coordinates like so:
+
+![A screenshot of the "set overworld" block with a 3 by 3 coordinate grid overlaid on top of it. The horizontal axis of the grid is labelled "Columns", and increases in the rightward direction. The vertical axis of the grid is labelled "Rows", and increases in the downward direction.](./media/coordinates.png)
+
+In the above example, the top-left tilemap is at the coordinate `column=0 row=0`. The bottom-right tilemap is at the coordinate `column=2 row=2`.
+
 ## Transitioning between maps
 
 The overworld extension will automatically load the next map whenever the player sprite approaches the edge of the current map. You can control how far away from the edge the player needs to be for the transition to start by using the "set transition radius" block.
