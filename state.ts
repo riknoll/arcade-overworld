@@ -590,13 +590,9 @@ namespace overworld {
                 }
                 this.playerSprite.left = this.nextPlayerLeft;
                 this.playerSprite.top = this.nextPlayerTop;
-                game.currentScene().camera.update();
 
                 tiles.setTilemap(newMap);
                 this.fireMapLoadEvent();
-
-                const playerDestinationLeft = this.playerSprite.left - game.currentScene().camera.drawOffsetX;
-                const playerDestinationTop = this.playerSprite.top - game.currentScene().camera.drawOffsetY;
 
                 game.eventContext().unregisterFrameHandler(callback);
                 const startTime = control.millis();
@@ -626,6 +622,9 @@ namespace overworld {
                     }
 
                     if (!playerIsInvisible) {
+                        const playerDestinationLeft = this.playerSprite.left - game.currentScene().camera.drawOffsetX;
+                        const playerDestinationTop = this.playerSprite.top - game.currentScene().camera.drawOffsetY;
+
                         const left = playerScreenLeft + (playerDestinationLeft - playerScreenLeft) * progress;
                         const top = playerScreenTop + (playerDestinationTop - playerScreenTop) * progress;
                         screen.drawTransparentImage(this.playerSprite.image, left, top);
@@ -644,6 +643,7 @@ namespace overworld {
                     // tilemap so that they get the map they're expecting
                     game.currentScene().tileMap = previousScene.tileMap;
                     game.currentScene().camera = previousScene.camera;
+                    game.currentScene().camera.update();
 
                     previousScene.render();
 
@@ -695,7 +695,6 @@ namespace overworld {
                         image.setPalette(fadePaletteFromColor(
                             originalPalette,
                             r,
-
                             g,
                             b,
                             (progress - 0.5) * 2
@@ -843,5 +842,25 @@ namespace overworld {
         }
 
         return colorNum;
+    }
+
+    function dumpImage(image: Image) {
+        let result = "img`\n";
+        const hexChars = "0123456789ABCDEF";
+        for (let y = 0; y < image.height; y++) {
+            let row = "    ";
+            for (let x = 0; x < image.width; x++) {
+                row += hexChars.charAt(image.getPixel(x, y));;
+                if (x < image.width - 1) {
+                    row += " ";
+                }
+                else {
+                    row += "\n";
+                }
+            }
+            result += row;
+        }
+        result += "`";
+        console.log(result);
     }
 }
