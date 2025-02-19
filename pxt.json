@@ -25,6 +25,7 @@
         "docs/set-map-transitions-enabled.md",
         "docs/set-overworld.md",
         "docs/set-player-sprite.md",
+        "docs/set-scroll-animation-z-index.md",
         "docs/set-walls-block-transitions.md",
         "main.ts",
         "state.ts",

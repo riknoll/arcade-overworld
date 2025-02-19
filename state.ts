@@ -20,6 +20,7 @@ namespace overworld {
         protected isTransitioning: boolean;
         protected nextPlayerLeft: number;
         protected nextPlayerTop: number;
+        protected scrollTransitionZIndex: number;
 
         constructor() {
             this.customColor = 0;
@@ -28,6 +29,7 @@ namespace overworld {
             this.row = 0;
             this.wallsBlockTransitions = false;
             this.transitionDuration = 300;
+            this.scrollTransitionZIndex = 99;
             this.transitionFunc = TimingFunction.Linear;
             this.transitionType = AnimationType.None;
             this.mapLoadedHandlers = [];
@@ -517,6 +519,10 @@ namespace overworld {
             this.mapLoadedHandlers = this.mapLoadedHandlers.filter(h => h !== handler);
         }
 
+        setScrollAnimationZIndex(z: number) {
+            this.scrollTransitionZIndex = z;
+        }
+
         protected initContinuousTilemap() {
             if (!this.map) return;
 
@@ -559,27 +565,42 @@ namespace overworld {
             this.isTransitioning = true;
             const playerIsInvisible = this.playerSprite.flags & SpriteFlag.Invisible;
 
+            const playerScreenLeft = this.playerSprite.left - game.currentScene().camera.drawOffsetX;
+            const playerScreenTop = this.playerSprite.top - game.currentScene().camera.drawOffsetY;
+
             this.playerSprite.setFlag(SpriteFlag.Invisible, true);
             const savedScreen = image.create(screen.width, screen.height);
-            const recorder = scene.createRenderable(100, () => {
+            const recorder = scene.createRenderable(this.scrollTransitionZIndex, (target, camera) => {
                 savedScreen.drawImage(screen, 0, 0);
             });
+
+            game.currentScene().render();
+
+            recorder.destroy();
+
+            if (!playerIsInvisible) {
+                this.playerSprite.setFlag(SpriteFlag.Invisible, false);
+            }
 
             let callback: control.FrameCallback;
 
             const loadNewMap = () => {
                 if (!playerIsInvisible) {
-                    this.playerSprite.setFlag(SpriteFlag.Invisible, false);
+                    this.playerSprite.setFlag(SpriteFlag.Invisible, true);
                 }
                 this.playerSprite.left = this.nextPlayerLeft;
                 this.playerSprite.top = this.nextPlayerTop;
-                recorder.destroy();
+                game.currentScene().camera.update();
+
                 tiles.setTilemap(newMap);
                 this.fireMapLoadEvent();
 
-                game.eventContext().unregisterFrameHandler(callback);
+                const playerDestinationLeft = this.playerSprite.left - game.currentScene().camera.drawOffsetX;
+                const playerDestinationTop = this.playerSprite.top - game.currentScene().camera.drawOffsetY;
 
-                const renderer = scene.createRenderable(100, () => {
+                game.eventContext().unregisterFrameHandler(callback);
+                const startTime = control.millis();
+                const renderer = scene.createRenderable(this.scrollTransitionZIndex, () => {
                     let progress = Math.min(1, (control.millis() - startTime) / this.transitionDuration);
 
                     progress = timingFunction(progress, this.transitionFunc);
@@ -603,21 +624,31 @@ namespace overworld {
                         screen.scroll(0, screen.height - offset);
                         screen.drawImage(savedScreen, 0, -offset);
                     }
+
+                    if (!playerIsInvisible) {
+                        const left = playerScreenLeft + (playerDestinationLeft - playerScreenLeft) * progress;
+                        const top = playerScreenTop + (playerDestinationTop - playerScreenTop) * progress;
+                        screen.drawTransparentImage(this.playerSprite.image, left, top);
+                    }
                 });
 
                 const previousScene = game.currentScene();
                 game.pushScene();
 
-                const startTime = control.millis();
                 scene.createRenderable(1, () => {
                     const currentMap = game.currentScene().tileMap;
+                    const currentCamera = game.currentScene().camera;
 
                     // if any render functions in the user project try to get the tilemap,
                     // they do so by getting it off of the current scene. override the scene's
                     // tilemap so that they get the map they're expecting
                     game.currentScene().tileMap = previousScene.tileMap;
+                    game.currentScene().camera = previousScene.camera;
+
                     previousScene.render();
+
                     game.currentScene().tileMap = currentMap;
+                    game.currentScene().camera = currentCamera;
 
                     if (control.millis() - startTime >= this.transitionDuration) {
                         this.isTransitioning = false;

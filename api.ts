@@ -211,6 +211,16 @@ namespace overworld {
         _state().setFadeColor(color);
     }
 
+    //% blockId=overworld_setScrollAnimationZIndex
+    //% block="overworld set scroll animation z $z"
+    //% group=Animation
+    //% z.defl=99
+    //% weight=70
+    //% help=github:arcade-overworld/docs/set-scroll-animation-z-index
+    export function setScrollAnimationZIndex(z: number) {
+        _state().setScrollAnimationZIndex(z);
+    }
+
     //% blockId=overworld_setMapTransitionsEnabled
     //% block="set overworld transitions enabled $enabled"
     //% group=Options
