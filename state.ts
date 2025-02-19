@@ -579,24 +579,10 @@ namespace overworld {
 
                 game.eventContext().unregisterFrameHandler(callback);
 
-                const previousScene = game.currentScene();
-                game.pushScene();
-
-                const startTime = control.millis();
-                scene.createRenderable(1, () => {
+                const renderer = scene.createRenderable(100, () => {
                     let progress = Math.min(1, (control.millis() - startTime) / this.transitionDuration);
 
                     progress = timingFunction(progress, this.transitionFunc);
-
-                    const currentMap = game.currentScene().tileMap;
-
-                    // if any render functions in the user project try to get the tilemap,
-                    // they do so by getting it off of the current scene. override the scene's
-                    // tilemap so that they get the map they're expecting
-                    game.currentScene().tileMap = previousScene.tileMap;
-                    previousScene.render();
-                    game.currentScene().tileMap = currentMap;
-
                     if (direction === CollisionDirection.Right) {
                         const offset = Math.round(progress * screen.width);
                         screen.scroll(screen.width - offset, 0);
@@ -617,10 +603,26 @@ namespace overworld {
                         screen.scroll(0, screen.height - offset);
                         screen.drawImage(savedScreen, 0, -offset);
                     }
+                });
 
-                    if (progress === 1) {
+                const previousScene = game.currentScene();
+                game.pushScene();
+
+                const startTime = control.millis();
+                scene.createRenderable(1, () => {
+                    const currentMap = game.currentScene().tileMap;
+
+                    // if any render functions in the user project try to get the tilemap,
+                    // they do so by getting it off of the current scene. override the scene's
+                    // tilemap so that they get the map they're expecting
+                    game.currentScene().tileMap = previousScene.tileMap;
+                    previousScene.render();
+                    game.currentScene().tileMap = currentMap;
+
+                    if (control.millis() - startTime >= this.transitionDuration) {
                         this.isTransitioning = false;
                         game.popScene();
+                        renderer.destroy();
                         if (!playerIsInvisible) {
                             this.playerSprite.setFlag(SpriteFlag.Invisible, false);
                         }
